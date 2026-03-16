@@ -1,5 +1,7 @@
 __pycache__
 *.pyc
-db.sqlite3
-media
 venv
+db.sqlite3
+.git
+.gitignore
+media
