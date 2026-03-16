@@ -23,9 +23,9 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 CLOUDINARY_STORAGE = {
-    "CLOUD_NAME": "your_cloud_name",
-    "API_KEY": "your_api_key",
-    "API_SECRET": "your_api_secret",
+    "CLOUD_NAME": os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    "API_KEY": os.environ.get("CLOUDINARY_API_KEY"),
+    "API_SECRET": os.environ.get("CLOUDINARY_API_SECRET"),
 }
 
 #MEDIA_URL = '/media/'
