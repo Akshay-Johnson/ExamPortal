@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Login</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #e0f7fa, #cce0ff);
+            position: relative; /* Make body positioned relative */
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            text-align: left;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .password-container {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .password-container input {
+            flex-grow: 1;
+        }
+
+        .password-container button {
+            background: none;
+            border: none;
+            position: absolute;
+            right: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #888;
+        }
+
+        button[type="submit"] {
+            background-color: #673AB7;
+            color: white;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #512DA8;
+        }
+
+        .signup-link {
+            margin-top: 20px;
+        }
+
+        a {
+            color: #2196F3;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        #error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        a[title="Go to Home"] {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            color: #2196F3;
+            text-decoration: none;
+        }
+
+        a[title="Go to Home"]:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <a href="{% url 'index' %}" title="Go to Home">&#8962;</a>
+
+    <div class="container">
+        <h2>Teacher Login</h2>
+
+        {% if request.session.popup_message %}
+        <div id="error-message">
+            {{ request.session.popup_message }}
+        </div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            
+            <label for="teacher-username">Username or Email</label>
+            <input type="text" id="teacher-username" name="username_or_email" placeholder="Enter username or email" required>
+
+            <label for="teacher-password">Password</label>
+            <div class="password-container">
+                <input type="password" id="teacher-password" name="password" placeholder="Enter password" required>
+                <button type="button" onclick="togglePassword()">👁</button>
+            </div>
+
+            <button type="submit">Login</button>
+        </form>
+
+        <div class="signup-link">
+            <p>Don't have an account? <a href="{% url 'teacherregister' %}">Register here</a></p>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const passwordField = document.getElementById('teacher-password');
+            const toggleButton = document.querySelector('button[onclick="togglePassword()"]');
+
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleButton.textContent = '🙈';
+            } else {
+                passwordField.type = 'password';
+                toggleButton.textContent = '👁';
+            }
+        }
+    </script>
+</body>
+</html>

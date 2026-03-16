@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Exam - Teacher Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { display: flex; min-height: 100vh; background: linear-gradient(135deg, #e0f7fa, #cce0ff); }
+        .sidebar { width: 280px; background: linear-gradient(135deg, rgba(44, 62, 80, 0.8), rgba(63, 81, 181, 0.8)); color: white; padding: 30px; position: fixed; height: 100%; display: flex; flex-direction: column; backdrop-filter: blur(10px); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.18); }
+        .sidebar h2 { text-align: center; margin-bottom: 30px; font-size: 28px; font-weight: 600; }
+        .sidebar ul { list-style: none; padding: 0; flex-grow: 1; }
+        .sidebar ul li { padding: 18px; transition: 0.3s; border-radius: 8px; margin-bottom: 8px; }
+        .sidebar ul li a { text-decoration: none; color: white; display: flex; align-items: center; gap: 12px; font-size: 16px; }
+        .sidebar ul li:hover { background: rgba(255, 255, 255, 0.1); }
+        .main-content { margin-left: 300px; padding: 30px; flex-grow: 1; }
+        .header { background: linear-gradient(135deg, rgba(0, 123, 255, 0.8), rgba(29, 78, 216, 0.8)); color: white; padding: 25px; text-align: center; font-size: 28px; font-weight: 600; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.18); }
+        .form-container { background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(240, 248, 255, 0.8)); padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.18); }
+        .form-container h3, .form-container h4 { text-align: center; margin-bottom: 15px; }
+        .form-container label { font-weight: bold; display: block; margin-top: 10px; }
+        .form-container input, .form-container select { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; }
+        .button { padding: 12px 18px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; transition: 0.3s; font-size: 14px; margin-top: 10px; }
+        .button:hover { background-color: #0056b3; transform: scale(1.05); }
+        .remove-btn { background-color: #dc3545; color: white; padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; transition: 0.3s; font-size: 14px; margin-top: 10px; }
+        .remove-btn:hover { background-color: #c82333; transform: scale(1.05); }
+        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); margin-top: 20px; position: relative; }
+        @media (max-width: 768px) { .sidebar { width: 220px; } .main-content { margin-left: 230px; padding: 20px; } }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Teacher Panel</h2>
+        <ul>
+            <li><a href="{% url 'teacherdashboard' %}"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="{% url 'create_exam' %}"><i class="fas fa-plus-circle"></i> Create Exam</a></li>
+            <li><a href="{% url 'view_created_exams' %}" class="active"><i class="fas fa-folder-open"></i> View Created Exams</a></li>
+            <li><a href="{% url 'exam_results' %}"><i class="fas fa-chart-bar"></i> Exam Results</a></li>
+            <li><a href="{% url 'teacher_profile' %}"><i class="fas fa-user"></i> Profile</a></li>
+            <li><a href="{% url 'user_logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <div class="form-container">
+            <h3>Edit Exam</h3>
+            <form method="POST" enctype="multipart/form-data" id="update-exam-form">
+                {% csrf_token %}
+                {{ exam_form.as_p }}
+                <h4>MCQ Questions</h4>
+                {{ question_formset.management_form }}
+                <div id="questions-container">
+                    {% for form in question_formset %}
+                    <div class="card question-card" id="question-{{ forloop.counter }}">
+                        <h5 class="question-title">Question {{ forloop.counter }}</h5>
+                        {{ form.as_p|safe }}
+                        <button type="button" class="remove-btn" onclick="removeQuestion(this)">Remove</button>
+                    </div>
+                    {% endfor %}
+                </div>
+                <button type="button" class="button" id="add-question-btn">Add Question</button>
+                <button type="submit" class="button">Update Exam</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let totalForms = document.getElementById("id_question_set-TOTAL_FORMS");
+            let questionContainer = document.getElementById("questions-container");
+            let addQuestionBtn = document.getElementById("add-question-btn");
+
+            function updateQuestionNumbers() {
+                let questionCards = document.querySelectorAll(".question-card");
+                questionCards.forEach((card, index) => {
+                    card.querySelector(".question-title").innerText = `Question ${index + 1}`;
+                });
+                totalForms.value = questionCards.length;
+            }
+
+            addQuestionBtn.addEventListener("click", function () {
+                let formNum = parseInt(totalForms.value);
+                let newForm = document.querySelector(".question-card").cloneNode(true);
+                newForm.innerHTML = newForm.innerHTML.replace(/question_set-(\d+)-/g, `question_set-${formNum}-`);
+
+                newForm.querySelectorAll("input, textarea").forEach(field => {
+                    if (field.type === "file") {
+                        field.value = "";
+                    } else {
+                        field.value = "";
+                    }
+                });
+
+                newForm.querySelectorAll("p").forEach(p => {
+                    if (p.innerText.includes("Currently:")) {
+                        p.remove();
+                    }
+                });
+
+                newForm.querySelectorAll("input[type='checkbox'], label").forEach(el => {
+                    if (el.innerText.includes("DELETE") || el.type === "checkbox") {
+                        el.remove();
+                    }
+                });
+
+                newForm.querySelector(".remove-btn").onclick = function () {
+                    removeQuestion(this);
+                };
+
+                questionContainer.appendChild(newForm);
+                updateQuestionNumbers();
+            });
+
+            function removeQuestion(button) {
+                button.closest(".question-card").remove();
+                updateQuestionNumbers();
+            }
+
+            document.querySelectorAll(".remove-btn").forEach(button => {
+                button.addEventListener("click", function () {
+                    removeQuestion(button);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

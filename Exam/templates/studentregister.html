@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #e0f7fa, #cce0ff);
+            position: relative;
+        }
+
+        .registration-form {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        button[type="submit"] {
+            background-color: #673AB7;
+            color: white;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #512DA8;
+        }
+
+        .login-link {
+            margin-top: 20px;
+            font-size: 15px;
+        }
+
+        .login-link a {
+            color: #2196F3;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+            color: #1E88E5;
+        }
+
+        a[title="Go to Home"] {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            color: #2196F3;
+            text-decoration: none;
+        }
+
+        a[title="Go to Home"]:hover {
+            text-decoration: underline;
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #888;
+        }
+
+        .password-input-container {
+            position: relative;
+        }
+
+        .password-input-container input[type="password"] {
+            padding-right: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="{% url 'index' %}" title="Go to Home">&#8962;</a>
+
+    <div class="registration-form">
+        <h2>Student Registration</h2>
+
+        <form method="POST" action="{% url 'studentregister' %}" onsubmit="return validateForm()">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+
+            <div class="form-group">
+                <label for="first_name">First Name</label>
+                <input type="text" id="first_name" name="first_name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="last_name">Last Name</label>
+                <input type="text" id="last_name" name="last_name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="text" id="phone" name="phone" required>
+            </div>
+
+            <div class="form-group password-wrapper">
+                <label for="password">Password</label>
+                <div class="password-input-container">
+                    <input type="password" id="password" name="password" required>
+                    <button type="button" class="password-toggle" onclick="togglePassword('password', this)">👁</button>
+                </div>
+            </div>
+
+            <div class="form-group password-wrapper">
+                <label for="confirm_password">Confirm Password</label>
+                <div class="password-input-container">
+                    <input type="password" id="confirm_password" name="confirm_password" required>
+                    <button type="button" class="password-toggle" onclick="togglePassword('confirm_password', this)">👁</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <button type="submit">Register</button>
+            </div>
+        </form>
+
+        <div class="login-link">
+            <p>Already have an account? <a href="{% url 'studentlogin' %}">Login here</a></p>
+        </div>
+    </div>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function validateForm() {
+            let username = document.getElementById("username").value.trim();
+            let email = document.getElementById("email").value.trim();
+            let phone = document.getElementById("phone").value.trim();
+            let password = document.getElementById("password").value;
+            let confirmPassword = document.getElementById("confirm_password").value;
+
+            // Username check
+            if (username === "") {
+                Swal.fire("⚠️ Invalid Input", "Username cannot be empty.", "error");
+                return false;
+            }
+
+            // Email format check
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailPattern.test(email)) {
+                Swal.fire("⚠️ Invalid Email", "Please enter a valid email address.", "error");
+                return false;
+            }
+
+            // Phone number check
+            const phonePattern = /^[6789]\d{9}$/;
+            if (!phonePattern.test(phone)) {
+                Swal.fire("⚠️ Invalid Phone", "Please enter a 10-digit phone number starting with 6, 7, 8, or 9.", "error");
+                return false;
+            }
+
+            // Password strength
+            const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+            if (!passwordPattern.test(password)) {
+                Swal.fire("⚠️ Weak Password", "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.", "error");
+                return false;
+            }
+
+            // Confirm password match
+            if (password !== confirmPassword) {
+                Swal.fire("⚠️ Password Mismatch", "Passwords do not match. Please check again.", "error");
+                return false;
+            }
+
+            return true;
+        }
+
+        function togglePassword(fieldId, button) {
+            let field = document.getElementById(fieldId);
+            if (field.type === "password") {
+                field.type = "text";
+                button.textContent = "🙈";
+            } else {
+                field.type = "password";
+                button.textContent = "👁";
+            }
+        }
+
+        {% if messages %}
+            {% for message in messages %}
+                Swal.fire({
+                    icon: "{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% else %}info{% endif %}",
+                    title: "{{ message.tags|capfirst }}",
+                    text: "{{ message }}",
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                });
+            {% endfor %}
+        {% endif %}
+    </script>
+</body>
+</html>

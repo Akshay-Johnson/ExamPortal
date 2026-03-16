@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Exams</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            display: flex;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #e0f7fa, #cce0ff);
+        }
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, rgba(44, 62, 80, 0.8), rgba(63, 81, 181, 0.8));
+            color: white;
+            padding: 30px;
+            position: fixed;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 600;
+            color: white;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            flex-grow: 1;
+        }
+        .sidebar ul li {
+            padding: 18px;
+            transition: 0.3s;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        .sidebar ul li a {
+            text-decoration: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+        }
+        .sidebar ul li:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .main-content {
+            margin-left: 300px;
+            padding: 30px;
+            flex-grow: 1;
+        }
+        .header {
+            background: linear-gradient(135deg, rgba(0, 123, 255, 0.8), rgba(29, 78, 216, 0.8));
+            color: white;
+            padding: 25px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 600;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .container {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(240, 248, 255, 0.8));
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .exam-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            transition: background 0.3s ease, transform 0.2s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        .exam-item:last-child {
+            border-bottom: none;
+        }
+        .exam-item:hover {
+            background: #f9f9f9;
+            transform: scale(1.02);
+        }
+        .button {
+            padding: 10px 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+        .remove {
+            background-color: rgb(0, 0, 0);
+            color: white;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        .remove:hover {
+            background-color: rgb(0, 0, 0);
+            transform: scale(1.05);
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.5);
+        }
+        .empty-message {
+            text-align: center;
+            font-size: 14px;
+            color: #777;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Admin Panel</h2>
+        <ul>
+            <li><a href="{% url 'admindashboard' %}"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="{% url 'manage_exams' %}"><i class="fas fa-file-alt"></i>Exams</a></li>
+            <li><a href="{% url 'teacher_pending' %}"><i class="fas fa-user-plus"></i> Approve Teachers</a></li>
+            <li><a href="{% url 'exam_approval' %}"><i class="fas fa-clipboard-check"></i> Manage Exams</a></li>
+            <li><a href="{% url 'manage_users' %}"><i class="fas fa-users"></i> Manage Users</a></li>
+            <li><a href="{% url 'user_logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+        {% comment %} <div class="header">View Exams</div> {% endcomment %}
+        <div class="container">
+            <h2>Exams Created by Teachers</h2>
+            {% if exams %}
+                {% for exam in exams %}
+                    <div class="exam-item">
+                        <span>{{ exam.subject }} (Created by: {{ exam.created_by.username }})</span>
+                        <form method="POST" action="{% url 'remove_exam' exam.id %}">
+                            {% csrf_token %}
+                            {% comment %} <button type="submit" class="button remove">Remove</button> {% endcomment %}
+                        </form>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="empty-message">No exams available.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Approved</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+        }
+
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .header .nav {
+            display: flex;
+        }
+
+        .header .nav li {
+            list-style: none;
+            padding: 0 20px;
+        }
+
+        .header .nav li a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        .header .nav li a:hover {
+            background-color: #575757;
+            border-radius: 4px;
+            padding: 5px;
+        }
+
+        .main-content {
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 16px;
+            color: white;
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        .back {
+            background-color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div>Admin Dashboard</div>
+        <ul class="nav">
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="{% url 'manage_users' %}">Manage Users</a></li>
+            <li><a href="#">Manage Exams</a></li>
+            <li><a href="#">View Results</a></li>
+            <li><a href="#">Settings</a></li>
+            <li><a href="{% url 'user_logout' %}">Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <h3>Teacher Approved</h3>
+            <p style="font-size: 18px; margin-top: 20px;">
+                The teacher <strong>{{ teacher.username }}</strong> has been approved successfully.
+            </p>
+            <a href="{% url 'approved_teacher' %}" class="btn back">Back to Pending Approvals</a>
+        </div>
+    </div>
+</body>
+</html>

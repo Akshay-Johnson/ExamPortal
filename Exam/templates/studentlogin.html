@@ -1,0 +1,184 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #e0f7fa, #cce0ff);
+            position: relative; /* Make body positioned relative */
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            text-align: left;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .password-container {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .password-container input {
+            flex-grow: 1;
+        }
+
+        .password-container button {
+            background: none;
+            border: none;
+            position: absolute;
+            right: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #888;
+        }
+
+        button[type="submit"] {
+            background-color: #673AB7;
+            color: white;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #512DA8;
+        }
+
+        .signup-link {
+            margin-top: 20px;
+        }
+
+        a {
+            color: #2196F3;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        #error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        a[title="Go to Home"] {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            color: #2196F3;
+            text-decoration: none;
+        }
+
+        a[title="Go to Home"]:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <a href="{% url 'index' %}" class="home-button" title="Go to Home">&#8962;</a>
+
+    <div class="container">
+        <h2>Student Login</h2>
+
+        <!-- Error Message Display -->
+        {% if request.session.popup_message %}
+        <div id="error-message" class="error-message" style="display: block;">
+            {{ request.session.popup_message }}
+        </div>
+        {% endif %}
+
+        <form method="POST" onsubmit="return validateLoginForm()">
+            {% csrf_token %}
+            <label for="login-identifier">Username or Email</label>
+            <input type="text" id="login-identifier" name="identifier" placeholder="Enter username or email" required>
+
+            <label for="student-password">Password</label>
+            <div class="password-container">
+                <input type="password" id="student-password" name="password" placeholder="Enter your password" required>
+                <button type="button" class="toggle-password" onclick="togglePassword()">👁</button>
+            </div>
+
+            <button type="submit">Login</button>
+        </form>
+
+        <div class="switch">
+            <p>Don't have an account? <a href="{% url 'studentregister' %}">Register here</a></p>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const passwordField = document.getElementById('student-password');
+            const toggleButton = document.querySelector('.toggle-password');
+
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleButton.textContent = '🙈';
+            } else {
+                passwordField.type = 'password';
+                toggleButton.textContent = '👁';
+            }
+        }
+
+        function validateLoginForm() {
+            const identifier = document.getElementById('login-identifier').value.trim();
+            const password = document.getElementById('student-password').value.trim();
+            {% comment %} const errorDiv = document.getElementById('error-message'); {% endcomment %}
+
+            if (identifier === '' || password === '') {
+                errorDiv.textContent = "⚠️ Please fill in all fields.";
+                errorDiv.style.display = 'block';
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+</body>
+</html>

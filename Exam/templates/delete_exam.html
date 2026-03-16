@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Exam</title>
+    <style>
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 400px;
+        }
+
+        .header {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #d9534f;
+        }
+
+        .warning {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            margin: 10px 5px;
+        }
+
+        .delete {
+            background-color: #d9534f;
+            color: white;
+        }
+
+        .delete:hover {
+            background-color: #c9302c;
+        }
+
+        .cancel {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .cancel:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">Delete Exam</div>
+        <p class="warning">⚠️ This action is irreversible! The exam "<strong>{{ exam.subject }}</strong>" will be permanently deleted.</p>
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit" class="button delete">Yes, Delete</button>
+            <a href="{% url 'view_created_exams' %}" class="button cancel">Cancel</a>
+        </form>
+    </div>
+</body>
+</html>

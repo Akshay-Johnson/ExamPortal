@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exam Result</title>
+</head>
+<body>
+    <p>Hi {{ student.username }},</p>
+
+    <p>You have successfully completed the exam: <strong>{{ exam.subject }}</strong>.</p>
+    <p><strong>Total Score:</strong> {{ total_score }}</p>
+
+    <h4>Detailed Report:</h4>
+    <ul>
+        {% for answer in answers %}
+            <li>
+                <strong>Q:</strong> {{ answer.question }}<br>
+                <strong>Your Answer:</strong> {{ answer.selected }}<br>
+                <strong>Correct Answer:</strong> {{ answer.correct }}<br>
+                <strong>Score:</strong> {{ answer.score }}
+            </li>
+            <br>
+        {% endfor %}
+    </ul>
+
+    <p>Thank you for taking the exam!</p>
+    <p>Best regards,<br>The Examination Team</p>
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam dddDetails</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            display: flex;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #e0f7fa, #cce0ff);
+        }
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, rgba(44, 62, 80, 0.8), rgba(63, 81, 181, 0.8));
+            color: white;
+            padding: 30px;
+            position: fixed;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            flex-grow: 1;
+        }
+        .sidebar ul li {
+            padding: 18px;
+            transition: 0.3s;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        .sidebar ul li a {
+            text-decoration: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+        }
+        .sidebar ul li:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .main-content {
+            margin-left: 300px;
+            padding: 30px;
+            flex-grow: 1;
+        }
+        .header {
+            background: linear-gradient(135deg, rgba(0, 123, 255, 0.8), rgba(29, 78, 216, 0.8));
+            color: white;
+            padding: 25px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 600;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .container {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(240, 248, 255, 0.8));
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .exam-info {
+            font-size: 18px;
+            margin-bottom: 12px;
+            color: #555;
+        }
+        .exam-info strong {
+            color: #673AB7;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(245, 245, 245, 0.8));
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #673AB7;
+            color: white;
+            font-size: 16px;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .actions {
+            text-align: center;
+            margin-top: 25px;
+        }
+        .btn {
+            padding: 12px 18px;
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 8px;
+            transition: 0.3s;
+        }
+        .btn.approve {
+            background-color: #4CAF50;
+        }
+        .btn.reject {
+            background-color: #D32F2F;
+        }
+        .btn.back {
+            background-color: #0277BD;
+        }
+        .btn:hover {
+            opacity: 0.8;
+            transform: translateY(-2px);
+        }
+        .option-img {
+            width: 80px;
+            height: auto;
+            display: block;
+            border-radius: 6px;
+            margin-top: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        {% comment %} <h2>Admin Panel</h2> {% endcomment %}
+        <ul>
+            <li><a href="{% url 'teacherdashboard' %}"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="{% url 'create_exam' %}"><i class="fas fa-plus-circle"></i> Create Exam</a></li>
+            <li><a href="{% url 'view_created_exams' %}"><i class="fas fa-folder-open"></i> View Created Exams</a></li>
+            <li><a href="{% url 'exam_results' %}"><i class="fas fa-chart-bar"></i> Exam Results</a></li>
+            <li><a href="{% url 'teacher_profile' %}"><i class="fas fa-user"></i> Profile</a></li>
+            <li><a href="{% url 'user_logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <div class="header">Exam Details</div>
+
+        <div class="container">
+            <h2>{{ exam.subject }}</h2>
+            <p class="exam-info"><strong>CreatedBy:</strong> {{ exam.created_by.username }}</p>
+            <p class="exam-info"><strong>Date:</strong> {{ exam.date }}</p>
+            <p class="exam-info"><strong> Expiry Date:</strong> {{exam.expiry_date}}</p>
+            <p class="exam-info"><strong>Time Limit:</strong> {{ exam.time_limit }} mins</p>
+            <p class="exam-info"><strong>Rules:</strong> {{ exam.rules }}</p>
+            <p class="exam-info"><strong> Total Marks:</strong> {{total_marks}}</p>
+
+            <h3 style="margin-top: 20px; text-align: center; color: #333;">Questions</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Question</th>
+                        <th>Options</th>
+                        <th>Correct Answer</th>
+                        <th>Marks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for question in exam.questions.all %}
+                    <tr>
+                        <td>{{ question.text }}</td>
+                        <td>
+                            <strong>A)</strong>
+                            {% if question.option_a_image %}
+                                <img src="{{ question.option_a_image.url }}" alt="Option A" class="option-img">
+                            {% endif %}
+                            {% if question.option_a_text %}
+                                {{ question.option_a_text }}
+                            {% endif %}
+                            <br>
+            
+                            <strong>B)</strong>
+                            {% if question.option_b_image %}
+                                <img src="{{ question.option_b_image.url }}" alt="Option B" class="option-img">
+                            {% endif %}
+                            {% if question.option_b_text %}
+                                {{ question.option_b_text }}
+                            {% endif %}
+                            <br>
+            
+                            <strong>C)</strong>
+                            {% if question.option_c_image %}
+                                <img src="{{ question.option_c_image.url }}" alt="Option C" class="option-img">
+                            {% endif %}
+                            {% if question.option_c_text %}
+                                {{ question.option_c_text }}
+                            {% endif %}
+                            <br>
+            
+                            <strong>D)</strong>
+                            {% if question.option_d_image %}
+                                <img src="{{ question.option_d_image.url }}" alt="Option D" class="option-img">
+                            {% endif %}
+                            {% if question.option_d_text %}
+                                {{ question.option_d_text }}
+                            {% endif %}
+                        </td>
+                        <td><strong>{{ question.correct_answer }}</strong></td>
+                        <td>{{ question.marks }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="actions">
+                <a href="{% url 'approve_exam' exam.id %}" class="btn approve">Approve</a>
+                <a href="{% url 'reject_exam' exam.id %}" class="btn reject">Reject</a>
+                <a href="{% url 'exam_approval' %}" class="btn back">Back to List</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

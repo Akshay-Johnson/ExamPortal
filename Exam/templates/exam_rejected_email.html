@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f9f9f9;
+            padding: 20px;
+            color: #333;
+        }
+        .email-container {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            max-width: 600px;
+            margin: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #d9534f;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <h2>Exam Rejected</h2>
+        <p>Dear {{ teacher.username }},</p>
+        <p>We regret to inform you that your submitted exam titled <strong>"{{ exam.subject }}"</strong> scheduled for <strong>{{ exam.date }}</strong> has been rejected.</p>
+        <p>This decision was made because the exam did not meet certain platform constraints or quality standards. Please review your exam and resubmit after making necessary improvements.</p>
+        <p>If you have any questions, feel free to reach out to the admin team.</p>
+        <p>Thank you for your understanding,<br>The Admin Team</p>
+    </div>
+</body>
+</html>

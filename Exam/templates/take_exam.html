@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start Exam - {{ exam.subject }}</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #e0f7fa, #cce0ff);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        .container {
+            display: flex;
+            width: 90%;
+            max-width: 1200px;
+            height: 90vh;
+            margin: auto;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(240, 248, 255, 0.8));
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .question-panel {
+            flex: 3;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, rgba(0, 123, 255, 0.8), rgba(29, 78, 216, 0.8));
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 10px;
+        }
+        .timer {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: red;
+            margin: 10px 0;
+        }
+        .question {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #673AB7;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+            text-align: center;
+            transition: background 0.3s ease;
+        }
+        .button:hover {
+            background-color: #5e35b1;
+        }
+        .video-panel {
+            position: fixed;
+            right: 20px;
+            top: 20px;
+            width: 200px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 5px;
+            z-index: 1000;
+        }
+        .video-preview {
+            width: 100%;
+            height: 100%;
+            border-radius: 4px;
+            border: 2px solid #673AB7;
+        }
+        .question-options label {
+            display: block;
+            margin-bottom: 8px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        .question-options label:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        .question-options img {
+            max-width: 100px;
+            height: auto;
+            display: block;
+            margin-top: 5px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="question-panel">
+            <div class="header">{{ exam.subject }} - Exam Questions</div>
+            <div class="timer" id="countdown-timer"></div>
+            <form id="exam-form" method="post" action="{% url 'submit_exam' exam.id %}">
+                {% csrf_token %}
+                {% for question in questions %}
+                <div class="question">
+                    <h3>Q{{ forloop.counter }}. {{ question.text }} 
+                        <span style="font-size: 14px; color: gray;">(Marks: {{ question.marks }})</span>
+                    </h3>
+                    <div class="question-options">
+                        <label>
+                            <input type="radio" name="question_{{ question.id }}" value="A" required>
+                            A. {% if question.option_a_text %}{{ question.option_a_text }}{% endif %}
+                            {% if question.option_a_image %}
+                                <img src="{{ question.option_a_image.url }}" alt="Option A">
+                            {% endif %}
+                        </label>
+                        <label>
+                            <input type="radio" name="question_{{ question.id }}" value="B">
+                            B. {% if question.option_b_text %}{{ question.option_b_text }}{% endif %}
+                            {% if question.option_b_image %}
+                                <img src="{{ question.option_b_image.url }}" alt="Option B">
+                            {% endif %}
+                        </label>
+                        <label>
+                            <input type="radio" name="question_{{ question.id }}" value="C">
+                            C. {% if question.option_c_text %}{{ question.option_c_text }}{% endif %}
+                            {% if question.option_c_image %}
+                                <img src="{{ question.option_c_image.url }}" alt="Option C">
+                            {% endif %}
+                        </label>
+                        <label>
+                            <input type="radio" name="question_{{ question.id }}" value="D">
+                            D. {% if question.option_d_text %}{{ question.option_d_text }}{% endif %}
+                            {% if question.option_d_image %}
+                                <img src="{{ question.option_d_image.url }}" alt="Option D">
+                            {% endif %}
+                        </label>
+                    </div>
+                </div>
+                {% endfor %}
+                <button type="submit" class="button">Submit Exam</button>
+            </form>
+        </div>
+        <div class="video-panel">
+            <video id="video-preview" class="video-preview" autoplay muted></video>
+        </div>
+    </div>
+    {% comment %} <video id="video" autoplay></video> {% endcomment %}
+<script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.min.js"></script>
+<script>
+    async function runFaceDetection() {
+        const video = document.getElementById("video");
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+        await faceapi.nets.tinyFaceDetector.loadFromUri('/static/models');
+
+        setInterval(async () => {
+            const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions());
+            console.log("Detections:", detections);
+        }, 3000);
+    }
+    runFaceDetection();
+</script>
+    <script>
+        let warningCounts = 0;
+        let maxWarnings = 3;
+        let mediaRecorder;
+        let recordedChunks = [];
+        let isSubmitting = false;
+        let recordingStartTime;
+        let examId = {{ exam.id }};
+        let recordingInterval;
+        let hasShownFinalWarning = false;
+    
+        function getCSRFToken() {
+            return document.querySelector("[name=csrfmiddlewaretoken]").value;
+        }
+    
+        function handleWarning(type, message) {
+            if (warningCounts < maxWarnings) {
+                warningCounts++;
+                alert(`⚠️ ${message} (Warnings: ${warningCounts}/${maxWarnings})`);
+                reportMalpractice(type, message);
+            }
+    
+            if (warningCounts >= maxWarnings) {
+                alert("🚨 Multiple warnings detected! Auto-submitting exam.");
+                finalizeRecordingAndSubmit(true);
+            }
+        }
+    
+        function reportMalpractice(type, message) {
+            fetch('/record_malpractice/', {
+                method: 'POST',
+                body: JSON.stringify({ exam_id: examId, issue: message }),
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCSRFToken() }
+            }).catch(error => console.error("Malpractice reporting error:", error));
+        }
+    
+        document.addEventListener("visibilitychange", function () {
+            if (document.hidden) {
+                handleWarning("tabSwitch", "Tab switching detected! Stay on the exam page.");
+            }
+        });
+    
+        document.addEventListener("keydown", function (event) {
+            if (["Escape", "F12"].includes(event.key)) {
+                event.preventDefault();
+                handleWarning("restrictedKey", "Restricted key press detected!");
+            }
+        });
+    
+        async function startFaceTracking() {
+            const video = document.getElementById("video-preview");
+        
+            try {
+                // Request camera access
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+        
+                // Load models before starting face detection
+                await loadFaceAPIModels();
+        
+                // Once video starts, begin face detection
+                video.onloadedmetadata = function () {
+                    console.log("📷 Webcam stream loaded. Starting face detection...");
+                    detectFaces(video);
+                };
+            } catch (error) {
+                alert("❌ Webcam access denied! Enable camera permissions.");
+                console.error("Webcam error:", error);
+            }
+        }
+        
+        // Load FaceAPI models
+        async function loadFaceAPIModels() {
+            try {
+                console.log("⏳ Loading face detection models...");
+                await faceapi.nets.tinyFaceDetector.loadFromUri('/static/models');
+                console.log("✅ Face detection models loaded.");
+            } catch (error) {
+                console.error("❌ Error loading face-api.js models:", error);
+            }
+        }
+        
+        // Detect faces at intervals
+        async function detectFaces(video) {
+            setInterval(async () => {
+                if (!video.srcObject) return;
+        
+                console.log("🔍 Detecting face...");
+                const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions());
+        
+                if (detections.length === 0) {
+                    console.warn("🚨 Face NOT detected!");
+                    handleWarning("faceNotDetected", "Face not detected! Stay in front of the camera.");
+                } else if (detections.length > 1) {
+                    console.warn("⚠️ Multiple faces detected!");
+                    handleWarning("multipleFaces", "Multiple faces detected! Please be alone while taking the exam.");
+                } else {
+                    console.log("✅ Face detected.");
+                }
+            }, 5000);
+        }
+        
+        
+    
+        async function startRecording() {
+            try {
+                const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: { displaySurface: "monitor" } });
+                const webcamStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    
+                document.getElementById("video-preview").srcObject = webcamStream;
+    
+                let combinedStream = new MediaStream([ 
+                    ...screenStream.getTracks(), 
+                    ...webcamStream.getTracks() 
+                ]);
+    
+                mediaRecorder = new MediaRecorder(combinedStream, { mimeType: "video/webm" });
+                recordedChunks = [];
+    
+                mediaRecorder.ondataavailable = event => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+    
+                mediaRecorder.onstop = function () {
+                    saveAndUploadRecording();
+                    setTimeout(() => {
+                        if (!isSubmitting) mediaRecorder.start(); // Restart recording if exam is ongoing
+                    }, 1000);
+                };
+    
+                mediaRecorder.start();
+                recordingStartTime = Date.now();
+                console.log("🎥 Recording started...");
+    
+                // **Automatically save recording every 5 seconds**
+                recordingInterval = setInterval(() => {
+                    console.log("⏳ Saving recording...");
+                    if (mediaRecorder.state !== "inactive") {
+                        mediaRecorder.stop();
+                    }
+                }, 5000); // Save every 5 seconds
+    
+            } catch (error) {
+                alert("❌ Recording failed! Please allow screen and webcam access.");
+                console.error("Recording error:", error);
+            }
+        }
+    
+        function finalizeRecordingAndSubmit(isAutoSubmit = false) {
+            if (isSubmitting) return;
+            isSubmitting = true;
+            clearInterval(recordingInterval); // Stop periodic saves
+    
+            setTimeout(() => {
+                if (mediaRecorder && mediaRecorder.state !== "inactive") {
+                    mediaRecorder.stop();
+                }
+            }, 2000);
+    
+            if (isAutoSubmit) {
+                setTimeout(submitExam, 3000);
+            }
+        }
+    
+        function saveAndUploadRecording() {
+            if (recordedChunks.length === 0) {
+                console.warn("⚠️ No recording data available.");
+                return;
+            }
+    
+            const formData = new FormData();
+            formData.append("recording", new Blob(recordedChunks, { type: "video/webm" }), "exam_recording.webm");
+    
+            fetch("{% url 'upload_recording' exam.id %}", {
+                method: "POST",
+                body: formData,
+                headers: { "X-CSRFToken": getCSRFToken() }
+            }).then(() => {
+                console.log("✅ Recording uploaded.");
+                recordedChunks = []; // Clear chunks after upload
+            }).catch(error => {
+                console.error("❌ Upload failed:", error);
+            });
+        }
+    
+        function submitExam() {
+            console.log("📩 Submitting exam...");
+            document.getElementById("exam-form").submit();
+        }
+    
+        document.addEventListener("DOMContentLoaded", function () {
+            // Wait for 1 second before starting the recording
+            setTimeout(() => {
+                startFaceTracking();
+                startRecording();
+            }, 1000); // Delay recording for 1 second
+    
+            let timeLeft = {{ exam.time_limit }} * 60;
+            let timerElement = document.getElementById("countdown-timer");
+    
+            let timerInterval = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert("⏳ Time is up! Your exam will be submitted automatically.");
+                    finalizeRecordingAndSubmit();
+                } else {
+                    timeLeft--;
+                    let minutes = Math.floor(timeLeft / 60);
+                    let seconds = timeLeft % 60;
+                    timerElement.textContent = `Time Left: ${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

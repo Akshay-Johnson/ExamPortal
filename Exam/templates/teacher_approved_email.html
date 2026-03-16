@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f1f1f1;
+            color: #333;
+            padding: 30px;
+        }
+        .container {
+            background: #fff;
+            border-radius: 8px;
+            padding: 25px;
+            max-width: 600px;
+            margin: auto;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #4CAF50;
+        }
+        p {
+            margin: 15px 0;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>You're Approved! 🎉</h2>
+        <p>Hi {{ teacher.username }},</p>
+        <p>Congratulations! Your teacher profile has been reviewed and approved by the admin. You can now log in and begin creating exams for students.</p>
+        <p>Thank you for joining our platform.</p>
+        <p>Best regards,<br>The Admin Team</p>
+    </div>
+</body>
+</html>

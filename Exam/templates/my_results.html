@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>My Results</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { display: flex; min-height: 100vh; background: linear-gradient(135deg, #e0f7fa, #cce0ff); }
+
+        .sidebar {
+            width: 260px; /* Slightly reduced width */
+            background: linear-gradient(135deg, rgba(44, 62, 80, 0.8), rgba(63, 81, 181, 0.8));
+            color: white;
+            padding: 25px; /* Slightly reduced padding */
+            position: fixed;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            z-index: 100; /* Ensure sidebar is above main content */
+        }
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 25px; /* Slightly reduced margin */
+            font-size: 24px; /* Slightly reduced font size */
+            font-weight: 600;
+            color: white;
+        }
+        .sidebar ul { list-style: none; padding: 0; flex-grow: 1; }
+        .sidebar ul li { padding: 15px; transition: 0.3s; border-radius: 8px; margin-bottom: 6px; } /* Reduced padding and margin */
+        .sidebar ul li a { text-decoration: none; color: white; display: flex; align-items: center; gap: 10px; font-size: 15px; } /* Reduced gap and font size */
+        .sidebar ul li:hover { background: rgba(255, 255, 255, 0.1); }
+
+        .main-content { margin-left: 280px; padding: 25px; flex-grow: 1; } /* Adjusted margin */
+        .header {
+            background: linear-gradient(135deg, rgba(0, 123, 255, 0.8), rgba(29, 78, 216, 0.8));
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px; /* Slightly reduced font size */
+            font-weight: 600;
+            border-radius: 10px;
+            margin-bottom: 25px; /* Slightly reduced margin */
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .container {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(240, 248, 255, 0.8));
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        h2 { color: #333; text-align: center; margin-bottom: 18px; font-size: 22px; } /* Slightly reduced margin and font size */
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 18px; /* Slightly reduced padding */
+            margin-bottom: 18px; /* Slightly reduced margin */
+            transition: transform 0.3s ease-in-out;
+        }
+        .card:hover { transform: scale(1.01); } /* Reduced scale on hover */
+        .card h3 { margin-bottom: 8px; color: #333; font-size: 18px; } /* Reduced margin and font size */
+        .empty-message { text-align: center; font-size: 15px; color: #777; margin-top: 10px; }
+
+        .results-table { width: 100%; border-collapse: collapse; margin-top: 15px; } /* Reduced margin */
+        .results-table th, .results-table td { border: 1px solid #ddd; padding: 10px; text-align: center; font-size: 15px; } /* Reduced padding and font size */
+        .results-table th { background-color: #2196F3; color: white; }
+
+        .status-pass { color: green; font-weight: bold; }
+        .status-fail { color: red; font-weight: bold; }
+        .correct-answer { color: green; font-weight: bold; }
+        .incorrect-answer { color: red; font-weight: bold; }
+        .right-option { color: blue; font-weight: bold; }
+
+        .email-button-container { text-align: center; margin-top: 15px; } /* Centered button container */
+        .btn {
+            display: inline-block; /* Make it inline to center properly */
+            padding: 8px 15px; /* Reduced padding */
+            font-size: 16px; /* Reduced font size */
+            background-color: #673AB7;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        .btn:hover { background-color: #512DA8; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Student Panel</h2>
+        <ul>
+            <li><a href="{% url 'studentdashboard' %}"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="{% url 'available_exam' %}"><i class="fas fa-file-alt"></i> Take Exams</a></li>
+            <li><a href="{% url 'my_results' %}"><i class="fas fa-chart-bar"></i> My Results</a></li>
+            <li><a href="{% url 'student_profile' %}"><i class="fas fa-user"></i> Profile</a></li>
+            <li><a href="{% url 'user_logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <div class="header">
+            My Exam Results
+        </div>
+        <div class="container">
+            {% if exams %}
+                <div class="card">
+                    <h3>📊 Exam Results Summary</h3>
+                    <table class="results-table">
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>Exam Name</th>
+                                <th>Score</th>
+                                <th>Passing Grade</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for exam, details in exams.items %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ exam }}</td>
+                                <td>{{ details.total_score|floatformat:2 }}%</td>
+                                <td>{{ details.passing_grade }}%</td>
+                                <td class="{% if details.total_score >= details.passing_grade %}status-pass{% else %}status-fail{% endif %}">
+                                    {% if details.total_score >= details.passing_grade %}Passed{% else %}Failed{% endif %}
+                                </td>
+                                <td>
+                                    <div class="email-button-container">
+                                        <form method="post" action="{% url 'send_result_email' %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="exam_name" value="{{ exam }}">
+                                            <button type="submit" class="btn">📧 Send Report</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="empty-message">No results available.</p>
+            {% endif %}
+
+            {% if exams %}
+                {% for exam, details in exams.items %}
+                    <div class="card">
+                        <h3>📖 {{ exam }} - Detailed Report</h3>
+                        <p><strong>Total Score:</strong> {{ details.total_score|floatformat:2 }}%</p>
+                        <p><strong>Passing Grade:</strong> {{ details.passing_grade }}%</p>
+
+                        {% if details.questions %}
+                        <table class="results-table">
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Question</th>
+                                    <th>Your Answer</th>
+                                    <th>Correct Answer</th>
+                                    <th>Marks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for result in details.questions %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ result.question }}</td>
+                                    <td class="{% if result.selected_option == result.correct_answer %}correct-answer{% else %}incorrect-answer{% endif %}">
+                                        {{ result.selected_option|default:"Not Answered" }}
+                                    </td>
+                                    <td class="right-option">{{ result.correct_answer }}</td>
+                                    <td>{{ result.score }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% else %}
+                            <p class="empty-message">No questions attempted for this exam.</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            history.replaceState(null, null, location.href);
+            window.addEventListener("popstate", function(event) {
+                history.pushState(null, null, location.href);
+                alert("Back button is disabled. You cannot return to the exam page.");
+            });
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Your CSS styles here (as provided) */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            display: flex;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #e0f7fa, #cce0ff);
+        }
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, rgba(44, 62, 80, 0.8), rgba(63, 81, 181, 0.8));
+            color: white;
+            padding: 30px;
+            position: fixed;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 10px; /* Reduced margin */
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            flex-grow: 1;
+        }
+        .sidebar ul li {
+            padding: 18px;
+            transition: 0.3s;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        .sidebar ul li a {
+            text-decoration: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+        }
+        .sidebar ul li:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .main-content {
+            margin-left: 300px;
+            padding: 30px;
+            flex-grow: 1;
+        }
+        .header {
+            background: linear-gradient(135deg, rgba(0, 123, 255, 0.8), rgba(29, 78, 216, 0.8));
+            color: white;
+            padding: 25px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 600;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            justify-content: center;
+        }
+        .card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(240, 248, 255, 0.8));
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            text-align: center;
+            transition: transform 0.3s ease-in-out;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .card p {
+            font-size: 26px;
+            font-weight: 600;
+            color: #007bff;
+        }
+        .card i {
+            font-size: 45px;
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+        .table-container {
+            margin-top: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(245, 245, 245, 0.8));
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background: #007bff;
+            color: white;
+            font-weight: 500;
+        }
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: 0.3s;
+            font-size: 14px;
+        }
+        .btn.view { background: #0277BD; }
+        .btn.approve { background: #4CAF50; }
+        .btn.reject { background: #D32F2F; }
+        .btn:hover {
+            opacity: 0.9;
+            transform: scale(1.03);
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 220px;
+            }
+            .main-content {
+                margin-left: 230px;
+                padding: 20px;
+            }
+            .cards {
+                grid-template-columns: 1fr;
+            }
+        }
+        .profile-picture {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 5px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .sidebar-username{
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        {% if request.user.profile.profile_picture %}
+            <img src="{{ request.user.profile.profile_picture.url }}" alt="Profile Picture" class="profile-picture">
+        {% endif %}
+        <div class="sidebar-username">{{ request.user.username }}</div>
+        <h2>Teacher Panel</h2>
+        <ul>
+            <li><a href="{% url 'teacherdashboard' %}"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="{% url 'create_exam' %}"><i class="fas fa-plus-circle"></i> Create Exam</a></li>
+            <li><a href="{% url 'view_created_exams' %}"><i class="fas fa-folder-open"></i> View Created Exams</a></li>
+            <li><a href="{% url 'exam_results' %}"><i class="fas fa-chart-bar"></i> Exam Results</a></li>
+            <li><a href="{% url 'teacher_profile' %}"><i class="fas fa-user"></i> Profile</a></li>
+            <li><a href="{% url 'user_logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            
+        </ul>
+    </div>
+    <div class="main-content">
+        {% comment %} <div class="header">Welcome, {{ user.username }}!</div> {% endcomment %}
+        <div class="cards">
+            <div class="card">
+                <i class="fas fa-file-alt"></i>
+                <h3>Total Exams</h3>
+                <p>{{ total_exams }}</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-users"></i>
+                <h3>Enrolled Students</h3>
+                <p>{{ total_students }}</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-check-circle"></i>
+                <h3>Students Attended Exams</h3>
+                <p>{{ total_students_attended }}</p>
+            </div>
+        </div>
+        <div class="table-container">
+            <h3>Recent Exams</h3>
+            <table>
+                <tr>
+                    <th>Subject</th>
+                    <th>Time Limit</th>
+                    <th>Actions</th>
+                </tr>
+                {% for exam in exams %}
+                <tr>
+                    <td>{{ exam.subject }}</td>
+                    <td>{{ exam.time_limit }} minutes</td>
+                    <td>
+                        <a href="{% url 'view_exam_teacher' exam.id %}" class="btn view">View</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3">No exams available.</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</body>
+</html>

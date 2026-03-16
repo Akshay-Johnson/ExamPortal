@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Instructions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #e0f7fa, #cce0ff);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .header {
+            background: linear-gradient(135deg, rgba(0, 123, 255, 0.8), rgba(29, 78, 216, 0.8));
+            color: white;
+            padding: 25px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 600;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .main-content {
+            padding: 30px;
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(240, 248, 255, 0.8));
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .info {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+            text-align: center;
+        }
+        .rules {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        .rules h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 20px;
+            background-color: #673AB7;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: background 0.3s;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #5e35b1;
+        }
+        .disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        #recordingStatus {
+            color: red;
+            font-weight: bold;
+            display: none;
+            margin-top: 15px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    {% comment %} <div class="header">
+        Exam Instructions
+    </div> {% endcomment %}
+
+    <div class="main-content">
+        <div class="container">
+            <p class="info"><strong>Exam Name:</strong> {{ exam.subject }}</p>
+            <p class="info"><strong>Teacher:</strong> {{ exam.created_by }}</p>
+            <p class="info"><strong>Time Limit:</strong> {{ exam.time_limit }} minutes</p>
+
+            <div class="rules">
+                <h3>Exam Rules:</h3>
+                {% if exam.rules %}
+                    <p>{{ exam.rules|linebreaks }}</p>
+                {% else %}
+                    <p>No specific rules provided by the teacher.</p>
+                {% endif %}
+            </div>
+
+            {% if has_attempted %}
+                <p style="color: red; font-weight: bold;">You have already taken this exam.</p>
+                <button class="button disabled" disabled>Exam Completed</button>
+            {% else %}
+                <button class="button" id="startExamBtn">Start Exam</button>
+            {% endif %}
+
+            <p id="recordingStatus">Recording in Progress...</p>
+        </div>
+    </div>
+
+    <script>
+        let mediaRecorder;
+        let recordedChunks = [];
+    
+        document.getElementById("startExamBtn").addEventListener("click", async function() {
+            let statusText = document.getElementById("recordingStatus");
+            let startExamBtn = document.getElementById("startExamBtn");
+    
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    
+                mediaRecorder = new MediaRecorder(stream);
+                recordedChunks = [];
+    
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+    
+                mediaRecorder.start();
+    
+                statusText.style.display = "block";
+                startExamBtn.style.display = "none";
+    
+                window.localStorage.setItem("isRecording", "true");
+    
+                // Open the exam page in a new tab
+                let examTab = window.open("{% url 'take_exam' exam.id %}", "_blank");
+    
+                if (examTab) {
+                    // Give some time for the new tab to open, then close the current page
+                    setTimeout(() => {
+                        window.close();
+                    }, 1000);
+                } else {
+                    alert("⚠️ Popup blocked! Please allow popups for this site.");
+                }
+    
+            } catch (err) {
+                alert("Error: Please allow access to your camera and microphone.");
+                console.error(err);
+            }
+        });
+    
+        async function uploadRecording() {
+            if (mediaRecorder && mediaRecorder.state !== "inactive") {
+                mediaRecorder.stop();
+            }
+    
+            setTimeout(async () => {
+                const blob = new Blob(recordedChunks, { type: "video/webm" });
+                let formData = new FormData();
+                formData.append("video", blob);
+                formData.append("exam_id", "{{ exam.id }}");
+    
+                await fetch("{% url 'save_recording' %}", {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}",
+                    },
+                });
+    
+                window.localStorage.removeItem("isRecording");
+            }, 2000);
+        }
+    
+        document.addEventListener("DOMContentLoaded", function() {
+            let submitButton = document.getElementById("submitExamBtn");
+            if (submitButton) {
+                submitButton.addEventListener("click", uploadRecording);
+            }
+        });
+    </script>
+    
+</body>
+</html>

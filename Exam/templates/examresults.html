@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Results</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            display: flex;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #e0f7fa, #cce0ff);
+        }
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, rgba(44, 62, 80, 0.8), rgba(63, 81, 181, 0.8));
+            color: white;
+            padding: 30px;
+            position: fixed;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            flex-grow: 1;
+        }
+        .sidebar ul li {
+            padding: 18px;
+            transition: 0.3s;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        .sidebar ul li a {
+            text-decoration: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+        }
+        .sidebar ul li:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .main-content {
+            margin-left: 300px;
+            padding: 30px;
+            flex-grow: 1;
+        }
+        .header {
+            background: linear-gradient(135deg, rgba(0, 123, 255, 0.8), rgba(29, 78, 216, 0.8));
+            color: white;
+            padding: 25px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 600;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .exam-section {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(240, 248, 255, 0.8));
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .exam-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #007bff;
+            color: white;
+        }
+        .malpractice-count {
+            font-weight: bold;
+        }
+        .high-malpractice {
+            color: red;
+        }
+        .pass { color: green; font-weight: bold; }
+        .fail { color: red; font-weight: bold; }
+
+        .report-actions {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+            gap: 15px;
+        }
+
+        .email-btn {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 220px;
+            }
+            .main-content {
+                margin-left: 230px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Teacher Panel</h2>
+        <ul>
+            <li><a href="{% url 'teacherdashboard' %}"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="{% url 'create_exam' %}"><i class="fas fa-plus-circle"></i> Create Exam</a></li>
+            <li><a href="{% url 'view_created_exams' %}"><i class="fas fa-folder-open"></i> View Created Exams</a></li>
+            <li><a href="{% url 'exam_results' %}" class="active"><i class="fas fa-chart-bar"></i> Exam Results</a></li>
+            <li><a href="{% url 'teacher_profile' %}"><i class="fas fa-user"></i> Profile</a></li>
+            <li><a href="{% url 'user_logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <div class="header">Exam Results</div>
+        {% for exam_entry in exam_data %}
+        <div class="exam-section">
+            <div class="exam-title">{{ exam_entry.exam.subject }} - {{ exam_entry.exam.date }}</div>
+
+            {% if exam_entry.results %}
+                <div class="report-actions">
+                    <a href="{% url 'download_exam_report' exam_entry.exam.id %}" class="download-btn">Download Report</a>
+
+                    <!-- Email Report to Teacher Form -->
+                    <form method="POST" action="{% url 'send_exam_report_email_to_teacher' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="exam_id" value="{{ exam_entry.exam.id }}">
+                        <button type="submit" class="email-btn"><i class="fas fa-envelope"></i> Email Me This Report</button>
+                    </form>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Score</th>
+                            <th>Status</th>
+                            <th>Malpractice Count</th>
+                            <th>Submitted At</th>
+                            <th>Recording</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for result in exam_entry.results %}
+                        <tr>
+                            <td>{{ result.student.username }}</td>
+                            <td>{{ result.score }}%</td>
+                            <td class="{% if result.is_passed %}pass{% else %}fail{% endif %}">
+                                {% if result.is_passed %}Passed{% else %}Failed{% endif %}
+                            </td>
+                            <td class="malpractice-count {% if result.malpractice_count > 0 %}high-malpractice{% endif %}">
+                                {{ result.malpractice_count }}
+                            </td>
+                            <td>{{ result.submitted_at|date:"F j, Y, g:i A" }}</td>
+                            <td>
+                                {% if result.video_url %}
+                                    <a href="{{ result.video_url.url }}" target="_blank">View Recording</a>
+                                {% else %}
+                                    No recording available
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No student has attempted this exam yet.</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

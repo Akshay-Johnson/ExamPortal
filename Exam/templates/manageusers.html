@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            display: flex;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #e0f7fa, #cce0ff);
+        }
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, rgba(44, 62, 80, 0.8), rgba(63, 81, 181, 0.8));
+            color: white;
+            padding: 30px;
+            position: fixed;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 600;
+            color: white;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            flex-grow: 1;
+        }
+        .sidebar ul li {
+            padding: 18px;
+            transition: 0.3s;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        .sidebar ul li a {
+            text-decoration: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+        }
+        .sidebar ul li:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .main-content {
+            margin-left: 300px;
+            padding: 30px;
+            flex-grow: 1;
+        }
+        .header {
+            background: linear-gradient(135deg, rgba(0, 123, 255, 0.8), rgba(29, 78, 216, 0.8));
+            color: white;
+            padding: 25px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 600;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 0.6s ease-in-out;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .user-list {
+            margin-top: 20px;
+        }
+        .user-list h3 {
+            background: rgba(0, 123, 255, 0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-transform: uppercase;
+            font-size: 18px;
+            text-align: center;
+        }
+        .user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease-in-out;
+            cursor: pointer;
+            position: relative;
+        }
+        .user-item:hover {
+            transform: scale(1.02);
+            box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.2);
+        }
+        .btn {
+            padding: 8px 12px;
+            border: none;
+            color: white;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: 0.3s ease-in-out;
+        }
+        .btn.manage {
+            background-color: #4CAF50;
+        }
+        .btn.delete {
+            background-color: #D32F2F;
+        }
+        .btn:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            .user-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .btn {
+                width: 100%;
+                text-align: center;
+                margin-top: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Admin Panel</h2>
+        <ul>
+            <li><a href="{% url 'admindashboard' %}"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="{% url 'manage_exams' %}"><i class="fas fa-file-alt"></i>Exams</a></li>
+            <li><a href="{% url 'teacher_pending' %}"><i class="fas fa-user-plus"></i> Approve Teachers</a></li>
+            <li><a href="{% url 'exam_approval' %}"><i class="fas fa-clipboard-check"></i>Manage Exams</a></li>
+            <li><a href="{% url 'manage_users' %}"><i class="fas fa-users"></i> Manage Users</a></li>
+            <li><a href="{% url 'user_logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+        {% comment %} <div class="header">Manage Users</div> {% endcomment %}
+        <div class="container">
+            <h2>Manage Users</h2>
+            <div class="user-list">
+                <h3>Teachers</h3>
+                {% if active_teachers %}
+                    {% for teacher in active_teachers %}
+                        <div class="user-item">
+                            <span>{{ teacher.username }}</span>
+                            <div><a href="{% url 'manage_teacher' teacher.id %}" class="btn manage">View</a>
+                                <a href="{% url 'delete_teacher' teacher.id %}" class="btn delete">Delete</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No teachers found.</p>
+                {% endif %}
+            </div>
+            <div class="user-list">
+                <h3>Students</h3>
+                {% if students %}
+                    {% for student in students %}
+                        <div class="user-item">
+                            <span>{{ student.username }}</span>
+                            <div>
+                                <a href="{% url 'manage_student' student.id %}" class="btn manage">View</a>
+                                <a href="{% url 'delete_student' student.id %}" class="btn delete">Delete</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No students found.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

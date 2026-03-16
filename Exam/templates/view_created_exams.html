@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Created Exams - Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #e0f7fa, #cce0ff);
+        }
+
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, rgba(44, 62, 80, 0.8), rgba(63, 81, 181, 0.8));
+            color: white;
+            padding: 30px;
+            position: fixed;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            flex-grow: 1;
+        }
+
+        .sidebar ul li {
+            padding: 18px;
+            transition: 0.3s;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .sidebar ul li a {
+            text-decoration: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+        }
+
+        .sidebar ul li:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .main-content {
+            margin-left: 300px;
+            padding: 30px;
+            flex-grow: 1;
+        }
+
+        .header {
+            background: linear-gradient(135deg, rgba(0, 123, 255, 0.8), rgba(29, 78, 216, 0.8));
+            color: white;
+            padding: 25px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 600;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .exams-container {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(240, 248, 255, 0.8));
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .filter-container {
+            margin-bottom: 15px;
+            text-align: right;
+        }
+
+        .filter-select {
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .exam-card {
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .exam-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .pending {
+            background-color: #fffbcc;
+        }
+
+        .rejected {
+            background-color: #f8d7da;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .button {
+            padding: 12px 18px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .button.delete {
+            background-color: #e74c3c;
+        }
+
+        .button.delete:hover {
+            background-color: #c0392b;
+        }
+
+        .pending-label {
+            color: #e67e22;
+            font-weight: bold;
+        }
+
+        .rejected-label {
+            color: #c0392b;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 220px;
+            }
+
+            .main-content {
+                margin-left: 230px;
+                padding: 20px;
+            }
+        }
+    </style>
+    <script>
+        function filterExams() {
+            var filterValue = document.getElementById("examFilter").value;
+            var allExams = document.getElementsByClassName("exam-card");
+
+            for (var i = 0; i < allExams.length; i++) {
+                var exam = allExams[i];
+
+                if (filterValue === "all") {
+                    exam.style.display = "flex";
+                } else if (filterValue === "approved" && !exam.classList.contains("pending") && !exam.classList.contains("rejected")) {
+                    exam.style.display = "flex";
+                } else if (filterValue === "pending" && exam.classList.contains("pending")) {
+                    exam.style.display = "flex";
+                } else if (filterValue === "rejected" && exam.classList.contains("rejected")) {
+                    exam.style.display = "flex";
+                } else {
+                    exam.style.display = "none";
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Teacher Panel</h2>
+        <ul>
+            <li><a href="{% url 'teacherdashboard' %}"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="{% url 'create_exam' %}"><i class="fas fa-plus-circle"></i> Create Exam</a></li>
+            <li><a href="{% url 'view_created_exams' %}" class="active"><i class="fas fa-folder-open"></i> View Created Exams</a></li>
+            <li><a href="{% url 'exam_results' %}"><i class="fas fa-chart-bar"></i> Exam Results</a></li>
+            <li><a href="{% url 'teacher_profile' %}"><i class="fas fa-user"></i> Profile</a></li>
+            <li><a href="{% url 'user_logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+        {% comment %} <div class="header">View Created Exams</div> {% endcomment %}
+        <div class="exams-container">
+            <h3>Created Exams</h3>
+            <div class="filter-container">
+                <label for="examFilter"><strong>Filter:</strong> </label>
+                <select id="examFilter" class="filter-select" onchange="filterExams()">
+                    <option value="all" selected>All Exams</option>
+                    <option value="approved">Approved Exams</option>
+                    <option value="pending">Pending Approval</option>
+                    <option value="rejected">Rejected Exams</option>
+                </select>
+            </div>
+            {% for exam in exams %}
+                <div class="exam-card {% if exam.approval_status == 'pending' %}pending{% elif exam.approval_status == 'rejected' %}rejected{% endif %}">
+                    <h3>{{ exam.subject }}</h3>
+                    <div class="button-group">
+                        <a href="{% url 'view_exam_teacher' exam.id %}" class="button">View</a>
+                        {% if exam.approval_status != "rejected" %}
+                            <a href="{% url 'update_exam' exam.id %}" class="button">Edit</a>
+                        {% endif %}
+                        {% if exam.approval_status == "rejected" %}
+                            <a href="{% url 'update_exam' exam.id %}" class="button">Edit</a>
+                        {% endif %}
+                        <form action="{% url 'remove_exam' exam.id %}" method="GET">
+                            <button type="submit" class="button delete">Remove</button>
+                        </form>
+                        {% if exam.approval_status == "pending" %}
+                            <span class="pending-label"></span>
+                        {% elif exam.approval_status == "rejected" %}
+                            <span class="rejected-label"></span>
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                <p>No exams found.</p>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

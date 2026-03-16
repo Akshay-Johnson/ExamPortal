@@ -1,0 +1,39 @@
+<h2>{{ exam.subject }} - Exam Report</h2>
+<p>Student: {{ student.get_full_name }} ({{ student.username }})</p>
+<p>Total Score: {{ obtained }}/{{ total_marks }} ({{ percentage }}%)</p>
+<p>Status: 
+    {% if passed %}
+        <strong style="color: green;">Passed</strong>
+    {% else %}
+        <strong style="color: red;">Failed</strong>
+    {% endif %}
+</p>
+
+<table border="1" cellpadding="6" cellspacing="0">
+    <thead>
+        <tr>
+            <th>No.</th>
+            <th>Question</th>
+            <th>Your Answer</th>
+            <th>Correct Answer</th>
+            <th>Score</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for sub in submissions %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ sub.question.text }}</td>
+            <td>{{ sub.selected_option }}</td>
+            <td>{{ sub.question.correct_answer }}</td>
+            <td>
+                {% if sub.selected_option == sub.question.correct_answer %}
+                    {{ sub.question.marks }}
+                {% else %}
+                    0
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

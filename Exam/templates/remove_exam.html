@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remove Exam</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin: 100px auto;
+            padding: 20px;
+            background: white;
+            width: 50%;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .button {
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .confirm {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .confirm:hover {
+            background-color: #c0392b;
+        }
+        .cancel {
+            background-color: #3498db;
+            color: white;
+        }
+        .cancel:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Confirm Removal</h2>
+        <p>Are you sure you want to remove the exam <strong>{{ exam.subject }}</strong>?</p>
+        <form action="{% url 'confirm_remove_exam' exam.id %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="button confirm">Yes, Remove</button>
+            <a href="{% url 'view_created_exams' %}" class="button cancel">Cancel</a>
+        </form>
+    </div>
+</body>
+</html>
